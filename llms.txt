@@ -2,7 +2,7 @@
 
 > Repos and skills I use for web development and marketing.
 
-## Web dev
+## Lập trình web
 
 - [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify): Biến toàn bộ dự án (code, tài liệu, PDF, ảnh, video) thành đồ thị tri thức để AI tra cứu thay vì đọc lại từng file.
 - [morluto/rea](https://github.com/morluto/rea): REA (Reverse Engineer Anything): một MCP giúp AI agent tìm hiểu cách một tính năng hoạt động trong ứng dụng không có mã nguồn, kèm bằng chứng.

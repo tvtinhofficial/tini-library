@@ -14,8 +14,10 @@ Dùng AI nhiều, bạn sẽ có hàng chục repo đã star, skill, prompt nằ
 ## Tính năng
 
 - **Dán link GitHub là xong.** App tự lấy README và số sao qua GitHub API.
+- **Thêm cả skill và công cụ khác.** Dán hoặc chọn file `SKILL.md` (skill của Claude hay file hướng dẫn bất kỳ), hoặc lưu link như Canva, Notion.
+- **Nhánh theo ngành của bạn.** Có sẵn Lập trình web / Marketing / Khác, bạn thêm nhánh riêng (Thiết kế, Video AI, Kế toán…). Bật AI thì mục mới được tự xếp nhánh, và AI tự đề xuất nhánh mới khi chưa có nhánh phù hợp.
 - **AI tóm tắt bằng khoá của bạn.** Hỗ trợ OpenAI, Anthropic (Claude), Google Gemini, Ollama (chạy local, miễn phí) và mọi API tương thích OpenAI (OpenRouter, Groq, LM Studio). Không có khoá vẫn lưu được, kèm mô tả gốc từ GitHub.
-- **Dạng thẻ hoặc dạng nhánh:** Thư viện → Lập trình web / Marketing / Khác → nhóm → công cụ.
+- **Danh sách hoặc sơ đồ:** danh sách gọn kèm khung chi tiết, hoặc sơ đồ Thư viện → nhánh → nhóm → công cụ.
 - **Xuất cho mọi AI:** `AGENTS.md`, `llms.txt`, `library.json` — copy hoặc tải về.
 - **Dữ liệu của bạn:** không máy chủ, không tài khoản. Dữ liệu và khoá API nằm trong trình duyệt; thư viện là file JSON, đưa lên git được.
 - Giao diện **tiếng Việt và tiếng Anh**.

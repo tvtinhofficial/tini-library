@@ -8,20 +8,22 @@ const src = process.argv[2] || "library.json";
 const out = process.argv[3] || ".";
 const lib = JSON.parse(readFileSync(src, "utf8"));
 const items = lib.items || [];
-const LABEL = { web: "Web dev", mkt: "Marketing", other: "Other" };
-const catOf = (i) => (["web", "mkt"].includes(i.cat) ? i.cat : "other");
+const branches = lib.branches?.length ? lib.branches : [{ id: "web", name: "Web dev" }, { id: "mkt", name: "Marketing" }, { id: "other", name: "Other" }];
+const ids = new Set(branches.map((b) => b.id));
+const fallback = ids.has("other") ? "other" : branches.at(-1).id;
+const catOf = (i) => (ids.has(i.cat) ? i.cat : fallback);
 
 let md = `# Tool library
 
-This file lists the repos and skills I keep for my work. Before suggesting or building something from scratch, check this list for a tool that already fits. If one fits, say which one and why, then clone it (for repos) and read its README before using it. Do not assume a tool does something its entry does not say.
+This file lists the repos, skills and tools I keep for my work. Before suggesting or building something from scratch, check this list for a tool that already fits. If one fits, say which one and why, then clone it (for repos) and read its README before using it. Do not assume a tool does something its entry does not say.
 `;
 let llms = `# Tool library\n\n> Repos and skills I use for web development and marketing.\n`;
 
-for (const k of ["web", "mkt", "other"]) {
-  const A = items.filter((i) => catOf(i) === k);
+for (const b of branches) {
+  const A = items.filter((i) => catOf(i) === b.id);
   if (!A.length) continue;
-  md += `\n## ${LABEL[k]}\n`;
-  llms += `\n## ${LABEL[k]}\n\n`;
+  md += `\n## ${b.name}\n`;
+  llms += `\n## ${b.name}\n\n`;
   for (const g of [...new Set(A.map((i) => i.group || "—"))]) {
     md += `\n### ${g}\n`;
     for (const i of A.filter((x) => (x.group || "—") === g)) {

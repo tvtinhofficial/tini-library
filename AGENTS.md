@@ -1,8 +1,8 @@
 # Tool library
 
-This file lists the repos and skills I keep for my work. Before suggesting or building something from scratch, check this list for a tool that already fits. If one fits, say which one and why, then clone it (for repos) and read its README before using it. Do not assume a tool does something its entry does not say.
+This file lists the repos, skills and tools I keep for my work. Before suggesting or building something from scratch, check this list for a tool that already fits. If one fits, say which one and why, then clone it (for repos) and read its README before using it. Do not assume a tool does something its entry does not say.
 
-## Web dev
+## Lập trình web
 
 ### Công cụ cho AI lập trình
 

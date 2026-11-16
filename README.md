@@ -14,8 +14,10 @@ If you use AI tools a lot, you end up with dozens of starred repos, skills and p
 ## Features
 
 - **Paste a GitHub link, done.** The app fetches the README and stars through the GitHub API.
+- **Skills and other tools too.** Paste or upload `SKILL.md` files (Claude skills, or any instruction file), or save any link such as Canva or Notion.
+- **Your own branches.** Start with Web dev / Marketing / Other, then add branches for your field (Design, AI video, Accounting…). With AI on, new items are sorted automatically, and AI proposes a new branch when nothing fits.
 - **AI summary with your own key.** Works with OpenAI, Anthropic (Claude), Google Gemini, Ollama (fully local, free) or any OpenAI-compatible API (OpenRouter, Groq, LM Studio). No key? It still saves the repo with GitHub's own description.
-- **Cards or branches.** See everything as cards, or as a tree: Library → Web dev / Marketing / Other → groups → tools.
+- **List or map.** A compact list with a detail panel, or a map: Library → branches → groups → tools.
 - **Export for any AI.** `AGENTS.md`, `llms.txt` or `library.json`, to copy or download.
 - **Your data stays with you.** No server, no account. Data and API keys live in your browser; the library is a plain JSON file you can commit.
 - **Vietnamese and English** interface.
@@ -55,11 +57,14 @@ node scripts/scan-skills.mjs             # adds your ~/.claude/skills to library
 ## Data format
 
 ```json
-{ "version": 1, "items": [ {
-  "id": "owner-repo", "type": "repo | skill", "name": "owner/repo",
-  "url": "https://github.com/owner/repo", "cat": "web | mkt | other",
+{ "version": 2,
+  "branches": [ { "id": "web", "name": "Web dev", "color": "#1877F2" } ],
+  "items": [ {
+  "id": "owner-repo", "type": "repo | skill | tool", "name": "owner/repo",
+  "url": "https://github.com/owner/repo", "cat": "<branch id>",
   "group": "Sub-group", "icon": "lucide-icon-name",
-  "desc": "...", "points": ["..."], "when": "...", "install": "...", "prompt": "..."
+  "desc": "...", "points": ["..."], "when": "...", "install": "...", "prompt": "...",
+  "body": "full SKILL.md text (skills only)"
 } ] }
 ```
 
@@ -67,7 +72,7 @@ node scripts/scan-skills.mjs             # adds your ~/.claude/skills to library
 
 - [x] MCP server so ChatGPT and Claude can search the library live
 - [ ] Hosted MCP (no tunnel needed)
-- [ ] Custom branches beyond Web dev / Marketing
+- [x] Custom branches for any field
 - [ ] Import from GitHub stars
 
 ## Privacy

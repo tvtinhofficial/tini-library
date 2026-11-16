@@ -9,8 +9,9 @@ import { homedir } from "node:os";
 const dir = process.argv[2] || join(homedir(), ".claude", "skills");
 const libPath = process.argv[3] || "library.json";
 if (!existsSync(dir)) { console.error(`Not found: ${dir}`); process.exit(1); }
-const lib = existsSync(libPath) ? JSON.parse(readFileSync(libPath, "utf8")) : { version: 1, items: [] };
+const lib = existsSync(libPath) ? JSON.parse(readFileSync(libPath, "utf8")) : { version: 2, items: [] };
 lib.items ||= [];
+lib.branches ||= [{ id: "web", name: "Web dev" }, { id: "mkt", name: "Marketing" }, { id: "other", name: "Other" }];
 
 const field = (fm, key) => {
   const m = fm.match(new RegExp(`^${key}:\\s*(.*)$`, "m"));
@@ -27,7 +28,7 @@ for (const name of readdirSync(dir)) {
   if (lib.items.some((i) => i.id === id)) continue;
   lib.items.push({
     id, type: "skill", name: field(fm, "name") || name,
-    cat: "other", group: "Skills", icon: "sparkles",
+    cat: "other", group: "Skills", icon: "sparkles", body: text.slice(0, 50000),
     desc: field(fm, "description").slice(0, 300),
     prompt: `Use the ${field(fm, "name") || name} skill to …`,
   });
