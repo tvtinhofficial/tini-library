@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>tinilib — repo & skill library for any AI</title>
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Save GitHub repos and AI skills, let AI summarize them, and export a library any AI (Claude, ChatGPT, Cursor, Codex) can use.">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="vendor/lucide.min.js"></script>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--line:#e5e7eb;--tx:#111827;--mut:#6b7280;--pri:#15121F;--lib:#12B76A;--web:#1877f2;--mkt:#f97316;--other:#7c3aed}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:'Be Vietnam Pro',system-ui,sans-serif;font-size:15px}
+button,input,select,textarea{font:inherit;color:inherit}
+.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:4}
+.top .wrap{padding:12px 20px;display:flex;align-items:center;gap:10px}
+.logo{width:32px;height:32px;border-radius:9px;background:var(--pri);color:#fff;display:grid;place-items:center}
+.sp{flex:1}
+.wrap{max-width:1120px;margin:auto;padding:24px 20px 60px}
+h1{font-size:26px;margin:0 0 6px}.sub{color:var(--mut);margin:0 0 18px;line-height:1.6}
+.stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 18px;min-width:130px}
+.stat b{font-size:22px;display:block}.stat span{color:var(--mut);font-size:13px}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:22px}
+.box h2{margin-top:0}
+label.l{display:block;margin:0 0 6px;font-weight:600;font-size:14px}
+.in,textarea,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+textarea{min-height:110px;resize:vertical}
+.in:focus,textarea:focus,select:focus{outline:2px solid #12B76A55;border-color:var(--pri)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.bar .in{flex:1;min-width:200px;width:auto}
+.tab{background:#fff;border:1px solid var(--line);padding:8px 14px;border-radius:999px;cursor:pointer;font-size:14px;display:flex;gap:6px;align-items:center}
+.tab.on{background:var(--pri);border-color:var(--pri);color:#fff}
+svg.lucide{width:16px;height:16px}
+h2{display:flex;align-items:center;gap:8px;font-size:19px;margin:26px 0 4px}
+h3{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 10px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.c{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;transition:.15s}
+.c:hover{border-color:var(--k);box-shadow:0 4px 14px #0000000d}
+.ic{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;background:color-mix(in srgb,var(--k) 12%,#fff);color:var(--k)}
+.c b{font-size:15px;word-break:break-word}.c p{margin:0;color:var(--mut);font-size:13px;line-height:1.55}
+.c ul{margin:0;padding-left:18px;font-size:13px;line-height:1.55}
+.pill{font-size:11px;padding:3px 8px;border-radius:999px;background:color-mix(in srgb,var(--k) 10%,#fff);color:var(--k);font-weight:500;display:inline-flex;gap:4px;align-items:center}
+.pill svg.lucide{width:11px;height:11px}
+code{background:#f3f4f6;padding:2px 6px;border-radius:5px;font-size:12px;word-break:break-all}
+.btn{background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 11px;font-size:13px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;text-decoration:none;color:var(--tx)}
+.btn:hover{border-color:var(--pri);color:var(--pri)}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}.btn.pri:hover{opacity:.9;color:#fff}
+.btn:disabled{opacity:.5;cursor:wait}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.web{--k:var(--web)}.mkt{--k:var(--mkt)}.other{--k:var(--other)}
+.note{color:var(--mut);font-size:13px}
+.warn{font-size:12px;color:#b45309;background:#fffbeb;border-radius:6px;padding:6px 10px}
+.vt{display:flex;gap:4px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px}
+.vt button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font-size:13px;cursor:pointer;display:flex;gap:5px;align-items:center;color:var(--mut)}
+.vt button.on{background:#f1f0f4;color:var(--pri)}
+#tree{position:relative;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;display:none}
+#tree svg.ln{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.t{display:flex;align-items:center}.kids{display:flex;flex-direction:column;gap:8px;margin-left:56px}.t.closed>.kids{display:none}
+.nd{display:flex;align-items:center;gap:7px;white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px 6px 7px;font-size:13px;cursor:pointer;position:relative;z-index:1}
+.nd:hover{border-color:var(--k)}
+.nd .d{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--k) 14%,#fff);color:var(--k)}
+.nd .d svg.lucide{width:13px;height:13px}
+.nd .n{color:var(--mut);font-size:11px;background:#f3f4f6;border-radius:999px;padding:1px 7px}
+.nd.root{background:var(--pri);color:#fff;border-color:var(--pri);font-weight:600;font-size:15px;padding:9px 16px 9px 9px}
+.nd.root .d{background:#ffffff33;color:#fff}
+.nd.br{font-weight:600;font-size:14px;border-width:2px;border-color:var(--k)}
+.nd.leaf{border-radius:9px}.t.closed>.nd::after{content:"+";color:var(--k);font-weight:700}
+.modal{position:fixed;inset:0;background:#11182766;display:none;align-items:center;justify-content:center;z-index:9;padding:16px}
+.modal.s{display:flex}.modal>div{background:#fff;border-radius:14px;padding:22px;width:560px;max-width:100%;max-height:90vh;overflow:auto}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 16px;border-radius:10px;opacity:0;transition:.2s;pointer-events:none;z-index:10}
+.toast.s{opacity:1}
+#det{position:fixed;right:20px;bottom:20px;width:330px;max-width:calc(100% - 40px);display:none;z-index:5;box-shadow:0 10px 30px #0000001f}
+details summary{cursor:pointer;color:var(--mut);font-size:13px;margin-top:10px}
+footer{color:var(--mut);font-size:13px;text-align:center;margin-top:40px}
+footer a{color:var(--mut)}
+</style></head><body>
+<div class="top"><div class="wrap">
+<img src="assets/logo/tinilib-ngang.svg" alt="tinilib" height="34"><span class="sp"></span>
+<button class="btn" id="langBtn"><i data-lucide="languages"></i><span>EN</span></button>
+<button class="btn" data-open="export"><i data-lucide="share-2"></i><span data-i="export">Xuất cho AI</span></button>
+<button class="btn" data-open="settings"><i data-lucide="settings"></i><span data-i="settings">Cài đặt</span></button>
+</div></div>
+
+<div class="wrap">
+<h1 data-i="title">Thư viện repo & skill cho mọi AI</h1>
+<p class="sub" data-i="subtitle">Lưu repo GitHub và skill bạn hay dùng. AI tự tóm tắt, chia nhánh, rồi xuất ra file mà Claude, ChatGPT, Cursor, Codex đều đọc được.</p>
+<div class="stats" id="stats"></div>
+
+<div class="box">
+<h2><i data-lucide="plus-circle"></i><span data-i="addTitle">Thêm repo</span></h2>
+<label class="l" data-i="f1">1. Link repo GitHub</label>
+<input class="in" id="link" placeholder="https://github.com/owner/repo">
+<details><summary data-i="pasteToggle">GitHub không tải được? Dán nội dung repo thủ công</summary>
+<textarea id="readme" style="margin-top:8px" data-ph="pastePh" placeholder="Mở trang repo → Ctrl+A → Ctrl+C → dán vào đây"></textarea></details>
+<div class="row" style="margin-top:12px"><button class="btn pri" id="addBtn"><i data-lucide="wand-sparkles"></i><span data-i="addBtn">Đọc & lưu</span></button><span id="st" class="note"></span></div>
+<p class="note" id="aiHint" style="margin-bottom:0"></p>
+</div>
+
+<div class="bar">
+<input class="in" id="q" data-ph="search" placeholder="Tìm repo hoặc skill…">
+<button class="tab on" data-f="all"><i data-lucide="layout-grid"></i><span data-i="all">Tất cả</span></button>
+<button class="tab" data-f="web"><i data-lucide="code-2"></i><span data-i="web">Lập trình web</span></button>
+<button class="tab" data-f="mkt"><i data-lucide="megaphone"></i><span data-i="mkt">Marketing</span></button>
+<button class="tab" data-f="other"><i data-lucide="boxes"></i><span data-i="other">Khác</span></button>
+<div class="vt"><button data-v="card" class="on"><i data-lucide="layout-grid"></i><span data-i="cards">Thẻ</span></button><button data-v="tree"><i data-lucide="git-fork"></i><span data-i="tree">Nhánh</span></button></div>
+</div>
+<div id="out"></div><div id="tree"></div><div id="det" class="c"></div>
+<footer>tinilib · MIT · by tinihub · <a href="https://github.com/tvtinhofficial/tini-library" target="_blank" rel="noopener">GitHub</a></footer>
+</div>
+
+<div class="modal" id="m-settings"><div>
+<h2 style="margin-top:0"><i data-lucide="settings"></i><span data-i="settings">Cài đặt</span></h2>
+<p class="note" data-i="keyNote">Khoá API chỉ lưu trong trình duyệt của bạn và chỉ gửi tới nhà cung cấp bạn chọn.</p>
+<label class="l" data-i="provider">Nhà cung cấp AI</label>
+<select id="s-provider">
+<option value="none">— Không dùng AI —</option>
+<option value="openai">OpenAI (ChatGPT)</option>
+<option value="anthropic">Anthropic (Claude)</option>
+<option value="gemini">Google Gemini</option>
+<option value="ollama">Ollama (local)</option>
+<option value="compat">OpenAI-compatible (OpenRouter, Groq, LM Studio…)</option>
+</select>
+<div id="s-keyw" style="margin-top:12px"><label class="l">API key</label><input class="in" id="s-key" type="password" autocomplete="off"></div>
+<div style="margin-top:12px"><label class="l">Model</label><input class="in" id="s-model" placeholder="gpt-4o-mini"></div>
+<div id="s-basew" style="margin-top:12px"><label class="l">Base URL</label><input class="in" id="s-base" placeholder="http://localhost:11434"></div>
+<div style="margin-top:12px"><label class="l">GitHub token <span class="note" data-i="optional">(không bắt buộc, tăng giới hạn 60 → 5000 lượt/giờ)</span></label><input class="in" id="s-gh" type="password" autocomplete="off"></div>
+<div class="row" style="margin-top:16px"><button class="btn pri" id="s-save"><i data-lucide="check"></i><span data-i="save">Lưu</span></button><button class="btn" data-close><span data-i="close">Đóng</span></button></div>
+<h3 style="margin-top:22px" data-i="dataTitle">Dữ liệu</h3>
+<div class="row"><button class="btn" id="d-export"><i data-lucide="download"></i>library.json</button>
+<label class="btn"><i data-lucide="upload"></i><span data-i="import">Nhập file</span><input type="file" id="d-import" accept=".json" hidden></label>
+<button class="btn" id="d-reset"><i data-lucide="rotate-ccw"></i><span data-i="reset">Về bản trong repo</span></button></div>
+</div></div>
+
+<div class="modal" id="m-export"><div>
+<h2 style="margin-top:0"><i data-lucide="share-2"></i><span data-i="export">Xuất cho AI</span></h2>
+<p class="note" data-i="exportNote">Chọn định dạng. Đặt file vào thư mục dự án để Cursor, Claude Code, Codex tự đọc; hoặc copy rồi dán vào ChatGPT / Claude.</p>
+<div class="row" style="margin-bottom:10px">
+<button class="tab on" data-x="agents">AGENTS.md</button><button class="tab" data-x="llms">llms.txt</button><button class="tab" data-x="json">library.json</button></div>
+<textarea id="x-out" readonly style="min-height:260px;font:12px ui-monospace,monospace"></textarea>
+<div class="row" style="margin-top:10px"><button class="btn pri" id="x-copy"><i data-lucide="copy"></i>Copy</button><button class="btn" id="x-dl"><i data-lucide="download"></i><span data-i="download">Tải file</span></button><button class="btn" data-close><span data-i="close">Đóng</span></button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const ICONS=["code-2","layout-template","palette","database","server","bot","brain","workflow","terminal-square","shield-check","search","megaphone","pen-line","image","video","clapperboard","shopping-cart","bar-chart-3","mail","globe","smartphone","puzzle","box","sparkles","file-text","languages","music","camera","link","rocket","scan-eye","git-branch","cpu","plug","layers","wand-sparkles","zap","lock","cloud","feather"];
+const T={vi:{title:"Thư viện repo & skill cho mọi AI",subtitle:"Lưu repo GitHub và skill bạn hay dùng. AI tự tóm tắt, chia nhánh, rồi xuất ra file mà Claude, ChatGPT, Cursor, Codex đều đọc được.",addTitle:"Thêm repo",f1:"1. Link repo GitHub",pasteToggle:"GitHub không tải được? Dán nội dung repo thủ công",pastePh:"Mở trang repo → Ctrl+A → Ctrl+C → dán vào đây",addBtn:"Đọc & lưu",search:"Tìm repo hoặc skill…",all:"Tất cả",web:"Lập trình web",mkt:"Marketing",other:"Khác",cards:"Thẻ",tree:"Nhánh",settings:"Cài đặt",export:"Xuất cho AI",keyNote:"Khoá API chỉ lưu trong trình duyệt của bạn và chỉ gửi tới nhà cung cấp bạn chọn.",provider:"Nhà cung cấp AI",optional:"(không bắt buộc, tăng giới hạn 60 → 5000 lượt/giờ)",save:"Lưu",close:"Đóng",dataTitle:"Dữ liệu",import:"Nhập file",reset:"Về bản trong repo",exportNote:"Chọn định dạng. Đặt file vào thư mục dự án để Cursor, Claude Code, Codex tự đọc; hoặc copy rồi dán vào ChatGPT / Claude.",download:"Tải file",root:"Thư viện",items:"mục",repos:"Repo",skills:"Skill",groups:"Nhóm",open:"Mở",copyPrompt:"Copy câu gọi",whenUse:"Dùng khi:",noAI:"Chưa bật AI: repo sẽ được lưu với mô tả gốc từ GitHub. Bật AI trong Cài đặt để có tóm tắt tiếng Việt.",withAI:"AI: ",fetching:"Đang tải README…",summarizing:"AI đang tóm tắt…",saved:"Đã lưu",badLink:"Link GitHub chưa đúng",exists:"Repo đã có, đang cập nhật lại",ghFail:"Không tải được từ GitHub. Hãy dán nội dung thủ công.",empty:"Không có kết quả.",copied:"Đã copy",deleted:"Đã xoá",confirmDel:"Bấm lần nữa để xoá",resetDone:"Đã về bản trong repo",imported:"Đã nhập",lang:"EN"},
+en:{title:"A repo & skill library for any AI",subtitle:"Save the GitHub repos and AI skills you use. AI summarizes and sorts them into branches, then exports a file Claude, ChatGPT, Cursor and Codex can all read.",addTitle:"Add a repo",f1:"1. GitHub repo link",pasteToggle:"GitHub not loading? Paste the repo content manually",pastePh:"Open the repo page → Ctrl+A → Ctrl+C → paste here",addBtn:"Read & save",search:"Search repos or skills…",all:"All",web:"Web dev",mkt:"Marketing",other:"Other",cards:"Cards",tree:"Branches",settings:"Settings",export:"Export for AI",keyNote:"Your API key stays in this browser and is only sent to the provider you pick.",provider:"AI provider",optional:"(optional, raises the limit from 60 to 5000 requests/hour)",save:"Save",close:"Close",dataTitle:"Data",import:"Import file",reset:"Reset to repo version",exportNote:"Pick a format. Put the file in your project for Cursor, Claude Code or Codex to read, or copy and paste it into ChatGPT / Claude.",download:"Download",root:"Library",items:"items",repos:"Repos",skills:"Skills",groups:"Groups",open:"Open",copyPrompt:"Copy prompt",whenUse:"Use when:",noAI:"AI is off: repos are saved with GitHub's own description. Turn on AI in Settings for summaries.",withAI:"AI: ",fetching:"Fetching README…",summarizing:"AI is summarizing…",saved:"Saved",badLink:"Not a valid GitHub link",exists:"Repo exists, updating it",ghFail:"Could not load from GitHub. Paste the content manually.",empty:"No results.",copied:"Copied",deleted:"Deleted",confirmDel:"Click again to delete",resetDone:"Reset to repo version",imported:"Imported",lang:"VI"}};
+const LS={data:"tini_lib_data",cfg:"tini_lib_cfg",lang:"tini_lib_lang"};
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let L=ls.get(LS.lang,(navigator.language||"vi").startsWith("vi")?"vi":"en");
+const t=k=>T[L][k]??k;
+let LIB={version:1,items:[]},F="all",V="card",cfg=ls.get(LS.cfg,{provider:"none"});const closed=new Set();
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("s");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("s"),1800)}
+async function cp(x){try{await navigator.clipboard.writeText(x);toast(t("copied"))}catch(e){const ta=document.createElement("textarea");ta.value=x;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();toast(t("copied"))}}
+function persist(){ls.set(LS.data,LIB)}
+function download(name,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/plain"}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+
+/* ---------- i18n ---------- */
+function applyLang(){document.documentElement.lang=L;document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));document.querySelectorAll("[data-ph]").forEach(e=>e.placeholder=t(e.dataset.ph));$("#langBtn span").textContent=t("lang");hint();render()}
+$("#langBtn").onclick=()=>{L=L==="vi"?"en":"vi";ls.set(LS.lang,L);applyLang()};
+function hint(){$("#aiHint").textContent=cfg.provider==="none"?t("noAI"):t("withAI")+$("#s-provider").selectedOptions[0]?.text+(cfg.model?" · "+cfg.model:"")}
+
+/* ---------- render ---------- */
+const catOf=i=>["web","mkt"].includes(i.cat)?i.cat:"other";
+function iconOf(i){return ICONS.includes(i.icon)?i.icon:(i.type==="skill"?"sparkles":"github")}
+function card(i){const k=catOf(i),isR=i.type!=="skill";
+ return `<div class="c ${k}"><div class="row" style="justify-content:space-between"><div class="ic"><i data-lucide="${iconOf(i)}"></i></div><span class="pill"><i data-lucide="${isR?"github":"sparkles"}"></i>${isR?"Repo":"Skill"}${i.stars?" · ★ "+fmt(i.stars):""}</span></div>
+ <b>${esc(i.name)}</b>${i.desc?`<p>${esc(i.desc)}</p>`:""}
+ ${(i.points||[]).length?`<ul>${i.points.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+ ${i.when?`<p style="color:var(--tx)"><b style="font-size:12px">${t("whenUse")}</b> ${esc(i.when)}</p>`:""}
+ ${i.install?`<code>${esc(i.install)}</code>`:""}
+ <div class="row" style="margin-top:auto">${i.url?`<a class="btn" href="${esc(i.url)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i>${t("open")}</a>`:""}
+ <button class="btn" data-cp="${esc(i.prompt||(i.url?"Use "+i.url:i.name))}"><i data-lucide="copy"></i>${t("copyPrompt")}</button>
+ <button class="btn" data-del="${esc(i.id)}" title="Delete"><i data-lucide="trash-2"></i></button></div></div>`}
+const fmt=n=>n>=1000?(n/1000).toFixed(n>=10000?0:1)+"k":n;
+function filtered(){const q=$("#q").value.toLowerCase();return LIB.items.filter(i=>(F==="all"||catOf(i)===F)&&JSON.stringify(i).toLowerCase().includes(q))}
+function render(){
+ const items=filtered();let h="";
+ for(const [k,ic] of [["web","code-2"],["mkt","megaphone"],["other","boxes"]]){
+  const A=items.filter(i=>catOf(i)===k);if(!A.length)continue;
+  h+=`<h2><i data-lucide="${ic}"></i>${t(k)} <span class="note" style="font-weight:400">${A.length} ${t("items")}</span></h2>`;
+  [...new Set(A.map(i=>i.group||"—"))].forEach(g=>{h+=`<h3>${esc(g)}</h3><div class="grid">${A.filter(i=>(i.group||"—")===g).map(card).join("")}</div>`});
+ }
+ $("#out").innerHTML=h||`<p class="sub">${t("empty")}</p>`;
+ const all=LIB.items;
+ $("#stats").innerHTML=[[t("repos"),all.filter(i=>i.type!=="skill").length],[t("skills"),all.filter(i=>i.type==="skill").length],[t("groups"),new Set(all.map(i=>catOf(i)+i.group)).size]].map(([a,b])=>`<div class="stat"><b>${b}</b><span>${a}</span></div>`).join("");
+ if(V==="tree")renderTree(items);
+ window.lucide&&lucide.createIcons();
+}
+function nd(cls,k,ic,label,n,id,extra=""){return `<div class="nd ${cls} ${k}" data-id="${esc(id)}" ${extra}><span class="d"><i data-lucide="${ic}"></i></span>${esc(label)}${n!=null?`<span class="n">${n}</span>`:""}</div>`}
+function renderTree(items){
+ const by={};items.forEach(i=>{const k=catOf(i),g=i.group||"—";(by[k]=by[k]||{});(by[k][g]=by[k][g]||[]).push(i)});
+ let h=`<div class="t">${nd("root","","library",t("root"),items.length,"root")}<div class="kids">`;
+ for(const [k,ic] of [["web","code-2"],["mkt","megaphone"],["other","boxes"]]){if(!by[k])continue;
+  const id="c-"+k;h+=`<div class="t ${closed.has(id)?"closed":""}">${nd("br",k,ic,t(k),Object.values(by[k]).flat().length,id)}<div class="kids">`;
+  for(const g in by[k]){const gid=id+"-"+g;h+=`<div class="t ${closed.has(gid)?"closed":""}">${nd("",k,"folder",g,by[k][g].length,gid)}<div class="kids">`;
+   by[k][g].forEach(i=>{h+=`<div class="t">${nd("leaf",k,iconOf(i),i.name,null,i.id,`data-leaf="${esc(i.id)}"`)}</div>`});h+=`</div></div>`}
+  h+=`</div></div>`}
+ $("#tree").innerHTML=h+`</div></div>`;window.lucide&&lucide.createIcons();requestAnimationFrame(draw);
+}
+function draw(){const T_=$("#tree");if(V!=="tree")return;T_.querySelector("svg.ln")?.remove();
+ const b=T_.getBoundingClientRect(),sl=T_.scrollLeft,st=T_.scrollTop;let p="";
+ T_.querySelectorAll(".t:not(.closed)>.kids").forEach(kd=>{const a=kd.previousElementSibling.getBoundingClientRect(),x1=a.right-b.left+sl,y1=a.top+a.height/2-b.top+st;
+  [...kd.children].forEach(c=>{const n=c.querySelector(":scope>.nd");if(!n)return;const r=n.getBoundingClientRect(),x2=r.left-b.left+sl,y2=r.top+r.height/2-b.top+st,m=(x1+x2)/2;
+   const col=getComputedStyle(n).getPropertyValue("--k").trim()||"#9ca3af";p+=`<path d="M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}" stroke="${col}" stroke-opacity=".45" stroke-width="1.6" fill="none"/>`})});
+ T_.insertAdjacentHTML("afterbegin",`<svg class="ln" width="${T_.scrollWidth}" height="${T_.scrollHeight}">${p}</svg>`)}
+addEventListener("resize",draw);
+
+/* ---------- events ---------- */
+let delArm=null;
+document.addEventListener("click",e=>{
+ const g=s=>e.target.closest(s);let x;
+ if(x=g("[data-cp]"))return cp(x.dataset.cp);
+ if(x=g("[data-del]")){const id=x.dataset.del;if(delArm!==id){delArm=id;toast(t("confirmDel"));setTimeout(()=>delArm=null,2500);return}
+  LIB.items=LIB.items.filter(i=>i.id!==id);persist();$("#det").style.display="none";render();toast(t("deleted"));return}
+ if(x=g(".bar .tab")){document.querySelectorAll(".bar .tab").forEach(y=>y.classList.remove("on"));x.classList.add("on");F=x.dataset.f;render();return}
+ if(x=g("[data-v]")){V=x.dataset.v;document.querySelectorAll("[data-v]").forEach(y=>y.classList.toggle("on",y===x));$("#out").style.display=V==="card"?"":"none";$("#tree").style.display=V==="tree"?"block":"none";$("#det").style.display="none";render();return}
+ if(x=g("[data-open]")){const m=$("#m-"+x.dataset.open);m.classList.add("s");if(x.dataset.open==="export")showExport("agents");if(x.dataset.open==="settings")loadCfg();return}
+ if(g("[data-close]")||e.target.classList.contains("modal")){document.querySelectorAll(".modal").forEach(m=>m.classList.remove("s"));return}
+ if(x=g("[data-x]")){document.querySelectorAll("[data-x]").forEach(y=>y.classList.toggle("on",y===x));showExport(x.dataset.x);return}
+ if(x=g("#tree .nd")){
+  if(x.dataset.leaf){const i=LIB.items.find(y=>y.id===x.dataset.leaf);if(!i)return;const D=$("#det");D.className="c "+catOf(i);D.style.display="flex";
+   D.innerHTML=`<button class="btn" style="align-self:flex-end;padding:4px 8px" onclick="this.parentNode.style.display='none'">✕</button>`+card(i).replace(/^<div class="c [^"]*">/,"").replace(/<\/div>$/,"");window.lucide&&lucide.createIcons();return}
+  if(x.classList.contains("root"))return;const tn=x.parentNode,id=x.dataset.id;tn.classList.toggle("closed");tn.classList.contains("closed")?closed.add(id):closed.delete(id);draw();
+ }
+});
+$("#q").oninput=render;
+addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal").forEach(m=>m.classList.remove("s"))});
+
+/* ---------- settings ---------- */
+const DEF={openai:{model:"gpt-4o-mini"},anthropic:{model:"claude-haiku-4-5"},gemini:{model:"gemini-2.0-flash"},ollama:{model:"llama3.1",base:"http://localhost:11434"},compat:{model:"",base:"https://openrouter.ai/api/v1"}};
+function loadCfg(){$("#s-provider").value=cfg.provider||"none";$("#s-key").value=cfg.key||"";$("#s-model").value=cfg.model||"";$("#s-base").value=cfg.base||"";$("#s-gh").value=cfg.gh||"";syncCfgUI()}
+function syncCfgUI(){const p=$("#s-provider").value;$("#s-keyw").style.display=["none","ollama"].includes(p)?"none":"";$("#s-basew").style.display=["ollama","compat"].includes(p)?"":"none";const d=DEF[p]||{};$("#s-model").placeholder=d.model||"";$("#s-base").placeholder=d.base||""}
+$("#s-provider").onchange=()=>{const d=DEF[$("#s-provider").value]||{};$("#s-model").value=d.model||"";$("#s-base").value=d.base||"";syncCfgUI()};
+$("#s-save").onclick=()=>{cfg={provider:$("#s-provider").value,key:$("#s-key").value.trim(),model:$("#s-model").value.trim(),base:$("#s-base").value.trim().replace(/\/$/,""),gh:$("#s-gh").value.trim()};ls.set(LS.cfg,cfg);hint();toast(t("saved"));$("#m-settings").classList.remove("s")};
+$("#d-export").onclick=()=>download("library.json",JSON.stringify(LIB,null,2));
+$("#d-import").onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());LIB=Array.isArray(d)?{version:1,items:d}:d;persist();render();toast(t("imported"))}catch(err){toast("JSON error")}};
+$("#d-reset").onclick=async()=>{try{localStorage.removeItem(LS.data)}catch(e){}await loadLib();toast(t("resetDone"))};
+
+/* ---------- GitHub + AI ---------- */
+async function gh(path,raw){const h={Accept:raw?"application/vnd.github.raw":"application/vnd.github+json"};if(cfg.gh)h.Authorization="Bearer "+cfg.gh;const r=await fetch("https://api.github.com/"+path,{headers:h});if(!r.ok)throw new Error("GitHub "+r.status);return raw?r.text():r.json()}
+async function ai(prompt){
+ const p=cfg.provider,m=cfg.model||DEF[p]?.model;
+ if(p==="openai"||p==="compat"){const base=p==="openai"?"https://api.openai.com/v1":(cfg.base||DEF.compat.base);
+  const r=await fetch(base+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+cfg.key},body:JSON.stringify({model:m,messages:[{role:"user",content:prompt}],temperature:.2})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error?.message||r.status);return j.choices[0].message.content}
+ if(p==="anthropic"){const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":cfg.key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:m,max_tokens:1200,messages:[{role:"user",content:prompt}]})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error?.message||r.status);return j.content.map(c=>c.text||"").join("")}
+ if(p==="gemini"){const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(cfg.key)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.2,responseMimeType:"application/json"}})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error?.message||r.status);return j.candidates[0].content.parts.map(x=>x.text).join("")}
+ if(p==="ollama"){const r=await fetch((cfg.base||DEF.ollama.base)+"/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:m,prompt,stream:false,format:"json"})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);return j.response}
+ throw new Error("no provider")}
+function parseJSON(s){const a=s.indexOf("{"),b=s.lastIndexOf("}");return JSON.parse(s.slice(a,b+1))}
+function summaryPrompt(name,content){
+ const groups=[...new Set(LIB.items.map(i=>catOf(i)+": "+(i.group||"")))].join("; ");
+ const lang=L==="vi"?"Vietnamese":"English";
+ return `Read the content of the GitHub repo "${name}" below and summarize it for someone who works in web development and marketing. Use ONLY the given content; do not invent. Write all text values in ${lang}. Return ONE JSON object and nothing else:
+{"cat":"web"|"mkt"|"other","group":"short sub-group name (reuse an existing one if it fits: ${groups||"none yet"})","desc":"what it does, 2 sentences","points":["3-5 key points, one short sentence each"],"when":"when to use it, 1 sentence","install":"shortest install command if present, else empty","icon":"one of: ${ICONS.join(", ")}","prompt":"a ready-to-paste request asking an AI assistant to use github.com/${name} for one concrete task"}
+
+CONTENT:
+${content.slice(0,60000)}`}
+$("#addBtn").onclick=async()=>{
+ const m=$("#link").value.match(/github\.com\/([\w.-]+)\/([\w.-]+)/);if(!m)return toast(t("badLink"));
+ const name=m[1]+"/"+m[2].replace(/\.git$/,""),id=slug(name),btn=$("#addBtn"),st=$("#st");
+ btn.disabled=true;let meta={},content=$("#readme").value.trim();
+ try{
+  if(!content){st.textContent=t("fetching");try{meta=await gh("repos/"+name);content=await gh("repos/"+name+"/readme",true)}catch(e){st.textContent="";toast(t("ghFail"));$("details").open=true;btn.disabled=false;return}}
+  let item={id,type:"repo",name,url:"https://github.com/"+name,cat:"other",group:L==="vi"?"Chưa phân loại":"Unsorted",desc:meta.description||"",stars:meta.stargazers_count,topics:meta.topics,added:new Date().toISOString()};
+  if(cfg.provider!=="none"){st.textContent=t("summarizing");Object.assign(item,parseJSON(await ai(summaryPrompt(name,(meta.description?meta.description+"\n\n":"")+content))),{summarized:true})}
+  if(LIB.items.some(i=>i.id===id))toast(t("exists"));
+  LIB.items=LIB.items.filter(i=>i.id!==id);LIB.items.unshift(item);persist();render();
+  $("#link").value="";$("#readme").value="";st.textContent="";toast(t("saved")+": "+name);
+ }catch(e){st.textContent="⚠ "+(e.message||e)}
+ btn.disabled=false};
+
+/* ---------- export ---------- */
+let XF="agents";
+function toAgents(){
+ const sec=k=>{const A=LIB.items.filter(i=>catOf(i)===k);if(!A.length)return"";let s=`\n## ${T.en[k]}\n`;
+  [...new Set(A.map(i=>i.group||"—"))].forEach(g=>{s+=`\n### ${g}\n`;A.filter(i=>(i.group||"—")===g).forEach(i=>{
+   s+=`\n- **${i.name}** (${i.type||"repo"})${i.url?` — ${i.url}`:""}\n`;if(i.desc)s+=`  - What: ${i.desc}\n`;if(i.when)s+=`  - When: ${i.when}\n`;if(i.install)s+=`  - Install: \`${i.install}\`\n`;(i.points||[]).forEach(p=>s+=`  - ${p}\n`)})});return s};
+ return `# Tool library
+
+This file lists the repos and skills I keep for my work. Before suggesting or building something from scratch, check this list for a tool that already fits. If one fits, say which one and why, then clone it (for repos) and read its README before using it. Do not assume a tool does something its entry does not say.
+${sec("web")}${sec("mkt")}${sec("other")}
+---
+Generated by tinilib — https://github.com/tvtinhofficial/tini-library
+`}
+function toLlms(){return `# Tool library\n\n> Repos and skills I use for web development and marketing.\n\n`+["web","mkt","other"].map(k=>{const A=LIB.items.filter(i=>catOf(i)===k);return A.length?`## ${T.en[k]}\n\n`+A.map(i=>`- [${i.name}](${i.url||"#"}): ${i.desc||""}`).join("\n")+"\n":""}).join("\n")}
+function showExport(f){XF=f;$("#x-out").value=f==="agents"?toAgents():f==="llms"?toLlms():JSON.stringify(LIB,null,2)}
+$("#x-copy").onclick=()=>cp($("#x-out").value);
+$("#x-dl").onclick=()=>download(XF==="agents"?"AGENTS.md":XF==="llms"?"llms.txt":"library.json",$("#x-out").value);
+
+/* ---------- boot ---------- */
+async function loadLib(){
+ const saved=ls.get(LS.data,null);
+ if(saved){LIB=saved}else{try{const r=await fetch("library.json",{cache:"no-store"});if(r.ok)LIB=await r.json()}catch(e){}}
+ LIB.items=LIB.items||[];render()}
+loadCfg();applyLang();loadLib();
+</script></body></html>

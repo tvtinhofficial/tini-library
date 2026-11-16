@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "graphify-labs-graphify",
+      "type": "repo",
+      "name": "Graphify-Labs/graphify",
+      "url": "https://github.com/Graphify-Labs/graphify",
+      "cat": "web",
+      "group": "Công cụ cho AI lập trình",
+      "icon": "brain",
+      "desc": "Biến toàn bộ dự án (code, tài liệu, PDF, ảnh, video) thành đồ thị tri thức để AI tra cứu thay vì đọc lại từng file.",
+      "points": [
+        "Phân tích code chạy cục bộ bằng tree-sitter, không gửi code đi đâu",
+        "Xuất graph.html để click xem, GRAPH_REPORT.md tóm tắt và graph.json để truy vấn",
+        "Mỗi liên kết được gắn nhãn đọc trực tiếp (EXTRACTED) hay suy luận (INFERRED)",
+        "Dùng được với Claude Code, Cursor, Codex, Gemini CLI và hơn 20 trợ lý khác"
+      ],
+      "when": "Khi dự án code lớn khiến AI tốn token và hay quên cấu trúc.",
+      "install": "uv tool install graphifyy && graphify install",
+      "prompt": "Chạy /graphify . trên dự án này, đọc GRAPH_REPORT.md rồi giải thích kiến trúc cho mình.",
+      "summarized": true
+    },
+    {
+      "id": "morluto-rea",
+      "type": "repo",
+      "name": "morluto/rea",
+      "url": "https://github.com/morluto/rea",
+      "cat": "web",
+      "group": "Công cụ cho AI lập trình",
+      "icon": "scan-eye",
+      "desc": "REA (Reverse Engineer Anything): một MCP giúp AI agent tìm hiểu cách một tính năng hoạt động trong ứng dụng không có mã nguồn, kèm bằng chứng.",
+      "points": [
+        "Phân tích file nhị phân, app JavaScript/Electron, .NET và website",
+        "Chạy cục bộ, kết quả có bằng chứng và giới hạn cho từng kết luận",
+        "Cài một lệnh cho Claude Code, Codex, Cursor, Gemini CLI"
+      ],
+      "when": "Khi muốn hiểu một tính năng của app khác để làm bản tương tự; chỉ dùng trong phạm vi điều khoản và luật cho phép.",
+      "install": "npx rea-agents setup",
+      "prompt": "Dùng REA tìm hiểu cách tính năng … trong ứng dụng … hoạt động, cho mình xem bằng chứng.",
+      "summarized": true
+    }
+  ]
+}
