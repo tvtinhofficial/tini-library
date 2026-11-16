@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/logo/tinilib-ngang.svg" alt="tinilib" height="64"></p>
+<p align="center"><img src="assets/social-preview.png" alt="tinilib" width="100%"></p>
 
 <p align="center"><b>Thư viện repo & skill cho mọi AI.</b><br>
 Lưu repo GitHub và skill bạn sưu tầm, để AI tóm tắt và chia nhánh, rồi xuất một file mà Claude, ChatGPT, Cursor, Codex đều đọc được.</p>

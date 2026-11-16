@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/logo/tinilib-ngang.svg" alt="tinilib" height="64"></p>
+<p align="center"><img src="assets/social-preview.png" alt="tinilib" width="100%"></p>
 
 <p align="center"><b>A repo & skill library that any AI can use.</b><br>
 Save the GitHub repos and AI skills you collect, let AI summarize and sort them into branches, then export one file that Claude, ChatGPT, Cursor, Codex and others can read.</p>
