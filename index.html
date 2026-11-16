@@ -381,16 +381,28 @@ $("#d-reset").onclick=async()=>{try{localStorage.removeItem(LS.data)}catch(e){}F
 
 /* ---------- AI ---------- */
 async function gh(path,raw){const h={Accept:raw?"application/vnd.github.raw":"application/vnd.github+json"};if(cfg.gh)h.Authorization="Bearer "+cfg.gh;const r=await fetch("https://api.github.com/"+path,{headers:h});if(!r.ok)throw new Error("GitHub "+r.status);return raw?r.text():r.json()}
+let AC=null;const AI_TIMEOUT=90000;
 async function ai(prompt){
+ AC=new AbortController();const to=setTimeout(()=>AC.abort("timeout"),AI_TIMEOUT);
+ try{return await aiCall(prompt,AC.signal)}
+ catch(e){if(AC.signal.aborted)throw new Error(AC.signal.reason==="timeout"?(L==="vi"?"AI không phản hồi sau 90 giây. Thử lại, hoặc đổi sang model nhanh hơn trong Cài đặt.":"AI did not respond within 90 s. Retry or pick a faster model in Settings."):(L==="vi"?"Đã huỷ":"Cancelled"));throw e}
+ finally{clearTimeout(to);AC=null}}
+async function aiCall(prompt,signal){
  const p=cfg.provider,m=cfg.model||DEF[p]?.model;
  if(p==="openai"||p==="compat"){const base=p==="openai"?"https://api.openai.com/v1":(cfg.base||DEF.compat.base);
-  const r=await fetch(base+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+cfg.key},body:JSON.stringify({model:m,messages:[{role:"user",content:prompt}],temperature:.2})});
+  const r=await fetch(base+"/chat/completions",{signal,method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+cfg.key},body:JSON.stringify({model:m,messages:[{role:"user",content:prompt}],temperature:.2})});
   const j=await r.json();if(!r.ok)throw new Error(j.error?.message||r.status);return j.choices[0].message.content}
- if(p==="anthropic"){const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":cfg.key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:m,max_tokens:1200,messages:[{role:"user",content:prompt}]})});
+ if(p==="anthropic"){const r=await fetch("https://api.anthropic.com/v1/messages",{signal,method:"POST",headers:{"Content-Type":"application/json","x-api-key":cfg.key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:m,max_tokens:1200,messages:[{role:"user",content:prompt}]})});
   const j=await r.json();if(!r.ok)throw new Error(j.error?.message||r.status);return j.content.map(c=>c.text||"").join("")}
- if(p==="gemini"){const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(cfg.key)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.2,responseMimeType:"application/json"}})});
-  const j=await r.json();if(!r.ok)throw new Error(j.error?.message||r.status);return j.candidates[0].content.parts.map(x=>x.text).join("")}
- if(p==="ollama"){const r=await fetch((cfg.base||DEF.ollama.base)+"/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:m,prompt,stream:false,format:"json"})});
+ if(p==="gemini"){
+  const call=async think=>{const gc={temperature:.2,responseMimeType:"application/json",maxOutputTokens:2048};
+   if(think==="level")gc.thinkingConfig={thinkingLevel:"low"};if(think==="budget")gc.thinkingConfig={thinkingBudget:0};
+   const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(cfg.key)}`,{signal,method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:gc})});
+   const j=await r.json();if(!r.ok){const e=new Error(j.error?.message||r.status);e.status=r.status;throw e}
+   const parts=j.candidates?.[0]?.content?.parts||[];return parts.filter(x=>!x.thought).map(x=>x.text||"").join("")};
+  for(const mode of[/^gemini-(3|[4-9])/.test(m)?"level":/^gemini-2\.5/.test(m)?"budget":"none","none"]){
+   try{return await call(mode)}catch(e){if(mode!=="none"&&e.status===400&&/think/i.test(e.message))continue;throw e}}}
+ if(p==="ollama"){const r=await fetch((cfg.base||DEF.ollama.base)+"/api/generate",{signal,method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:m,prompt,stream:false,format:"json"})});
   const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);return j.response}
  throw new Error("no provider")}
 function parseJSON(s){return JSON.parse(s.slice(s.indexOf("{"),s.lastIndexOf("}")+1))}
@@ -407,7 +419,7 @@ Return ONE JSON object and nothing else:
 {"branch":"an existing branch id from the list, OR \\"new\\"","new_branch":"short name of the new branch if branch is \\"new\\", else empty","group":"short sub-group (reuse an existing group if it fits)","desc":"what it does, 2 sentences","points":["3-5 key points, one short sentence each"],"when":"when to use it, 1 sentence","install":"${kind==="skill"?"leave empty":"shortest install command if present, else empty"}","icon":"one of: ${ICONS.join(", ")}","prompt":"${kind==="skill"?"a ready-to-paste request that would make an AI assistant use this skill for one concrete task":`a ready-to-paste request asking an AI assistant to use github.com/${name} for one concrete task`}"}
 
 CONTENT:
-${content.slice(0,60000)}`}
+${content.slice(0,24000)}`}
 async function aiFill(item,kind,content){
  const r=parseJSON(await ai(summaryPrompt(kind,item.name,content)));
  if(r.branch==="new"&&r.new_branch){let bid=slug(r.new_branch);const ex=LIB.branches.find(b=>b.id===bid||b.name.toLowerCase()===r.new_branch.toLowerCase());
@@ -415,7 +427,11 @@ async function aiFill(item,kind,content){
  else if(LIB.branches.some(b=>b.id===r.branch))item.cat=r.branch;
  for(const k of["group","desc","points","when","install","icon","prompt"])if(r[k]&&(!Array.isArray(r[k])||r[k].length))item[k]=r[k];
  item.summarized=true}
-async function busy(btn,fn){btn.disabled=true;try{await fn()}catch(e){$("#st").textContent="⚠ "+(e.message||e)}btn.disabled=false}
+let tick=null;
+function status(msg){clearInterval(tick);const st=$("#st");if(!msg){st.textContent="";return}
+ const t0=Date.now(),upd=()=>{st.innerHTML=esc(msg)+` <span style="opacity:.7">${Math.round((Date.now()-t0)/1000)}s</span> <button class="linkbtn" data-cancel>${L==="vi"?"Huỷ":"Cancel"}</button>`};upd();tick=setInterval(upd,1000)}
+document.addEventListener("click",e=>{if(e.target.closest("[data-cancel]")&&AC)AC.abort("user")});
+async function busy(btn,fn){btn.disabled=true;try{await fn()}catch(e){status("");$("#st").textContent="⚠ "+(e.message||e)}clearInterval(tick);btn.disabled=false}
 
 /* ---------- add: repo ---------- */
 $("#addBtn").onclick=()=>busy($("#addBtn"),async()=>{
@@ -423,7 +439,7 @@ $("#addBtn").onclick=()=>busy($("#addBtn"),async()=>{
  const name=m[1]+"/"+m[2].replace(/\.git$/,""),st=$("#st");let meta={},content=$("#readme").value.trim();
  if(!content){st.textContent=t("fetching");try{meta=await gh("repos/"+name);content=await gh("repos/"+name+"/readme",true)}catch(e){st.textContent="";toast(t("ghFail"));$("#pasteWrap").hidden=false;return}}
  const item={id:slug(name),type:"repo",name,url:"https://github.com/"+name,cat:targetBranch(),group:"",desc:meta.description||"",stars:meta.stargazers_count,topics:meta.topics,added:new Date().toISOString()};
- if(cfg.provider!=="none"){st.textContent=t("summarizing");await aiFill(item,"repo",(meta.description?meta.description+"\n\n":"")+content)}
+ if(cfg.provider!=="none"){status(t("summarizing"));await aiFill(item,"repo",(meta.description?meta.description+"\n\n":"")+content)}
  addItem(item);$("#link").value="";$("#readme").value="";$("#pasteWrap").hidden=true;st.textContent="";toast(t("saved")+": "+name)});
 
 /* ---------- add: skill ---------- */
@@ -435,7 +451,7 @@ function parseSkill(text,fallback){
 async function addSkillText(text,fallback){
  const s=parseSkill(text,fallback);
  const item={id:"skill-"+slug(s.name),type:"skill",name:s.name,cat:targetBranch(),group:"",desc:s.desc,body:text.slice(0,50000),prompt:`Dùng skill "${s.name}" để …`,added:new Date().toISOString()};
- if(cfg.provider!=="none"){$("#st").textContent=t("summarizing")+" "+s.name;await aiFill(item,"skill",text)}
+ if(cfg.provider!=="none"){status(t("summarizing")+" "+s.name);await aiFill(item,"skill",text)}
  addItem(item);return s.name}
 $("#skillBtn").onclick=()=>busy($("#skillBtn"),async()=>{const txt=$("#skillTxt").value.trim();if(!txt)return toast(t("needSkill"));
  const n=await addSkillText(txt);$("#skillTxt").value="";$("#st").textContent="";toast(t("saved")+": "+n)});
