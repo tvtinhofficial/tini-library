@@ -1,0 +1,19 @@
+{
+  "name": "tinilib-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for tinilib: search your repo & skill library from Claude, ChatGPT, Cursor",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "http": "node server.mjs --http 3333"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
+  },
+  "type": "module",
+  "bin": {
+    "tinilib-mcp": "server.mjs"
+  }
+}

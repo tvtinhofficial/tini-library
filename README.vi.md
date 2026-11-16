@@ -43,6 +43,7 @@ Bật AI tóm tắt: **Cài đặt → Nhà cung cấp AI**, dán khoá và ch�
 | Cursor, Claude Code, Codex, Gemini CLI, Copilot | Xuất `AGENTS.md`, đặt ở thư mục gốc dự án (Claude Code: copy thêm thành `CLAUDE.md`). |
 | ChatGPT, Claude (web/app), Gemini | Dán nội dung `AGENTS.md` vào chat, hoặc thêm làm file trong Project / GPT riêng. |
 | AI khác | `llms.txt` là bản ngắn; `library.json` có đầy đủ trường. |
+| **Tra cứu trực tiếp (MCP)** | Chạy [MCP server](mcp/) để Claude Desktop, Claude Code, Cursor hoặc ChatGPT tìm trong thư viện mà không cần dán file. |
 
 Tạo lại file từ dòng lệnh sau khi sửa `library.json`:
 

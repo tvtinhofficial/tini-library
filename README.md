@@ -43,6 +43,7 @@ To turn on AI summaries: **Settings → AI provider**, then paste your key and p
 | Cursor, Claude Code, Codex, Gemini CLI, Copilot | Export `AGENTS.md` and put it in the root of your project (Claude Code also reads it if you rename or copy it to `CLAUDE.md`). |
 | ChatGPT, Claude (web/app), Gemini | Export and paste `AGENTS.md` into the chat, or add it to a Project / custom GPT as a file. |
 | Anything else | `llms.txt` is a short list; `library.json` has every field. |
+| **Live search (MCP)** | Run the [MCP server](mcp/) and Claude Desktop, Claude Code, Cursor or ChatGPT can search your library directly — no file pasting. |
 
 Rebuild the files from the command line after editing `library.json`:
 
@@ -64,7 +65,8 @@ node scripts/scan-skills.mjs             # adds your ~/.claude/skills to library
 
 ## Roadmap
 
-- [ ] MCP server so ChatGPT and Claude can search the library live
+- [x] MCP server so ChatGPT and Claude can search the library live
+- [ ] Hosted MCP (no tunnel needed)
 - [ ] Custom branches beyond Web dev / Marketing
 - [ ] Import from GitHub stars
 
