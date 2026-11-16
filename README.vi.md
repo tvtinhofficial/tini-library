@@ -54,6 +54,15 @@ node scripts/build-agents.mjs            # tạo AGENTS.md và llms.txt
 node scripts/scan-skills.mjs             # thêm skill trong ~/.claude/skills vào thư viện
 ```
 
+## Nhật ký cập nhật
+
+Xem [CHANGELOG.md](CHANGELOG.md). Mới nhất:
+
+- Tối đa 90 giây: quá thời gian sẽ báo rõ “AI không phản hồi sau 90 giây” thay vì đứng im.
+- Có đồng hồ đếm giây và nút “Huỷ” ngay cạnh chữ “AI đang tóm tắt…”.
+- Gemini 3.x trả lời nhanh hơn: app yêu cầu model suy nghĩ ở mức thấp, nên thường còn vài giây thay vì 30–90 giây.
+- Gửi ít chữ hơn: chỉ gửi 24.000 ký tự đầu của README thay vì 60.000.
+
 ## Quyền riêng tư
 
 Khoá API lưu trong localStorage của trình duyệt và chỉ gửi tới nhà cung cấp bạn chọn. Dùng máy chung thì xoá khoá trong Cài đặt sau khi dùng.

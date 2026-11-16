@@ -75,6 +75,10 @@ node scripts/scan-skills.mjs             # adds your ~/.claude/skills to library
 - [x] Custom branches for any field
 - [ ] Import from GitHub stars
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md). Latest: AI requests time out after 90 s with a Cancel button, faster Gemini 3.x (low thinking), shorter input.
+
 ## Privacy
 
 API keys are stored in your browser's localStorage and sent only to the provider you choose. On a shared computer, clear them in Settings after use.
